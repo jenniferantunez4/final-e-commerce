@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
 
     let config = {
         tableName: "usuarios"
+       
     };
 
     const Usuario = sequelize.define("Usuario", cols, config);

@@ -1,7 +1,7 @@
 const db = require('../database/models');
 const Sequelize = require('sequelize');
-const { log } = require('debug');
-const op = db.Sequelize.Op;
+/* const { log } = require('debug'); */
+const Op = db.Sequelize.Op;
 
 module.exports = {
     detalle: function (req,res) {
@@ -30,33 +30,21 @@ module.exports = {
     },
 
     buscar: function (req,res) {
-        let busqueda = req.query.busqueda;
+        const result = req.query.busqueda
         db.Producto.findAll({
-            where:
-                {
-                    [op.or]: [
-                            {
-                                nombre: {
-                                    [op.like]: `%${busqueda}%`
-                                }
-                            },
-                            {
-                                marca: {
-                                [op.like]: `%${busqueda}%`
-
-                                }
-                            }
-                   ]
-
-                }
-            
+          where: { 
+               nombre: {[Op.substring]: result}
+         },
+         
         })
-        .then(function (resultados) {
-            res.render('resultadoBusqueda', { title: busqueda , resultados: resultados});
-        })
+        .then(function(resultados){
+            return res.render("resultadoBusqueda", {resultados})
+        }).catch(err =>console.log(1,err))
+       
+      
     },
-
-    agregarComentario: function (req,res) {
+    
+    agregarComentario: function(req,res) {
         if (req.session.usuarioLogueado == undefined) {
             res.redirect("/");
         }
@@ -82,21 +70,22 @@ module.exports = {
     },
 
     productoSubmit: function (req,res) {
-        if (req.session.usuarioLogueado == undefined) {
-            res.redirect("/");
+      if (req.session.usuarioLogueado == undefined) {
+          res.redirect("/");
         }
-        db.Producto.create({
-            nombre: req.body.nombre,
-            marca: req.body.marca,
-            precio: req.body.precio,
-            categoria_id: req.body.categoria,
-            img_url: req.body.imagen
-        })
-        .then(function (resultado) {
-            res.redirect('/productos/detalle/'+ resultado.id)
-        })
-
+        
+         db.Producto.create({
+             nombre: req.body.nombre,
+             marca: req.body.marca,
+             img_url: req.body.imagen,
+             precio: req.body.precio,
+             categoria_id:req.body.categoria,
+         }).then(function(producto){ 
+                res.redirect("/");
+         }).catch(err =>console.log(1,err))
+        
     },
+   
 
     misProductos: function (req, res) {
         if (req.session.usuarioLogueado == undefined) {
