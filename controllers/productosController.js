@@ -43,7 +43,7 @@ module.exports = {
        
       
     },
-    
+
     agregarComentario: function(req,res) {
         if (req.session.usuarioLogueado == undefined) {
             res.redirect("/");
@@ -79,6 +79,7 @@ module.exports = {
              marca: req.body.marca,
              img_url: req.body.imagen,
              precio: req.body.precio,
+             usuario_id:req.session.usuarioLogueado.id,
              categoria_id:req.body.categoria,
          }).then(function(producto){ 
                 res.redirect("/");
